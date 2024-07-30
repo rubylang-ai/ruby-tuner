@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+
+require "ruby_tuner"
+
+# Load custom configuration if it exists
+custom_configuration_file = "#{Dir.pwd}/.ruby-tuner/config.rb"
+if File.exist?(custom_configuration_file)
+  require custom_configuration_file
+end
+
+RubyTuner::CLI.start
