@@ -84,11 +84,69 @@ file.
 
 ## Evaluating an Implementation
 
-Comming soon...
+RubyTuner provides an `evaluate` command to assess various evaluation criteria
+for generated content and the original implementation of a feature. This command is
+useful for testing the output of fine-tuned models or for comparing different
+implementations.
+
+### Usage
 
 ```bash
-ruby_tuner evaluate your-feature-description
+ruby_tuner evaluate FEATURE_ID [IMPLEMENTATION]
 ```
+
+**Parameters:**
+
+- `FEATURE_ID`: The ID of the feature to evaluate (required).
+- `IMPLEMENTATION`: The implementation to evaluate (optional).
+
+**Options:**
+
+* `--similarity-method METHOD`: Specify the similarity method to use (`tf_idf` or `exact`; default: `tf_idf`).
+* `--acceptance-score SCORE`: Set the similarity score that passes evaluation (default: `0.8`).
+* `--file PATH`: Specify a file containing the implementation to evaluate.
+
+### Examples
+
+Evaluate an inline implementation:
+
+```bash
+ruby_tuner evaluate sort-array "def sort_array(arr); arr.sort; end"
+```
+
+Evaluate an implementation from a file:
+
+```bash
+ruby_tuner evaluate sort-array --file ./implementations/sort_array.rb
+```
+
+Evaluate an implementation from standard input:
+
+```bash
+echo "def sort_array(arr); arr.sort; end" | ruby_tuner evaluate sort-array
+```
+
+Use a different similarity method and threshold:
+
+```
+ruby_tuner evaluate sort-array --similarity-method exact --similarity-threshold 0.9 "def sort_array(arr); arr.sort; end"
+```
+
+### How it works
+
+The evaluate command compares the provided implementation with the original
+implementation stored in the feature's directory. It uses the specified
+similarity method to calculate a similarity score and determines if the
+implementation passes based on the similarity threshold.
+
+This command is particularly useful for:
+
+* Assessing the quality of generated code from fine-tuned models
+* Comparing different implementations of the same feature
+* Validating machine-generated code against human-written implementations
+
+The evaluation results, including similarity scores and pass/fail status, will
+be displayed in the console output.
 
 ## Generating Training Data
 
