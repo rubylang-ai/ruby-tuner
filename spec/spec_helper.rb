@@ -29,4 +29,8 @@ RSpec.configure do |config|
 
   config.order = :random
   Kernel.srand config.seed
+
+  config.before(:each) do
+    allow(RubyTuner).to receive(:logger).and_return(Logger.new(nil))
+  end
 end

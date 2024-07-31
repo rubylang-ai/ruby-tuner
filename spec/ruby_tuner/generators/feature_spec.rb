@@ -26,7 +26,7 @@ RSpec.describe RubyTuner::Generators::Feature do
 
   describe "#generate_feature_file" do
     it "generates a feature file with implementation and test_cases" do
-      generator = described_class.new([description], { implementation_file: implementation_file, test_cases: test_cases_file })
+      generator = described_class.new([description], {implementation_file: implementation_file, test_cases: test_cases_file})
 
       expect(generator).to receive(:create_file).with(
         "#{workspace_dir}/features/sort-an-array-using-the-b-tree-algorithm/feature.rb",
@@ -64,7 +64,7 @@ RSpec.describe RubyTuner::Generators::Feature do
     end
 
     it "uses a custom template when provided" do
-      generator = described_class.new([description], { template: template_file })
+      generator = described_class.new([description], {template: template_file})
 
       expect(generator).to receive(:create_file).with(
         "#{workspace_dir}/features/sort-an-array-using-the-b-tree-algorithm/feature.rb",
@@ -82,7 +82,7 @@ RSpec.describe RubyTuner::Generators::Feature do
 
     it "raises an error when the custom template does not exist" do
       custom_template_path = "custom_template.erb"
-      generator = described_class.new([description], { implementation_file: implementation_file, test_cases: test_cases_file, template: custom_template_path })
+      generator = described_class.new([description], {implementation_file: implementation_file, test_cases: test_cases_file, template: custom_template_path})
 
       expect do
         generator.invoke_all
@@ -92,7 +92,7 @@ RSpec.describe RubyTuner::Generators::Feature do
     it "raises an error when the feature already exists" do
       FileUtils.mkdir_p("#{workspace_dir}/features/sort-an-array-using-the-b-tree-algorithm")
 
-      generator = described_class.new([description], { implementation_file: implementation_file, test_cases: test_cases_file })
+      generator = described_class.new([description], {implementation_file: implementation_file, test_cases: test_cases_file})
 
       expect do
         generator.invoke_all
