@@ -3,6 +3,8 @@ PATH
   specs:
     ruby-tuner (0.1.0)
       activesupport
+      narray
+      tf-idf-similarity
       thor
       zeitwerk
 
@@ -33,6 +35,7 @@ GEM
     lint_roller (1.1.0)
     minitest (5.24.1)
     mutex_m (0.2.0)
+    narray (0.6.1.2)
     parallel (1.25.1)
     parser (3.3.4.0)
       ast (~> 2.4.1)
@@ -86,10 +89,13 @@ GEM
       lint_roller (~> 1.1)
       rubocop-performance (~> 1.21.0)
     strscan (3.1.0)
+    tf-idf-similarity (0.3.0)
+      unicode_utils (~> 1.4)
     thor (1.3.1)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.5.0)
+    unicode_utils (1.4.0)
     zeitwerk (2.6.16)
 
 PLATFORMS
