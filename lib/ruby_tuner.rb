@@ -8,9 +8,12 @@ loader.setup
 module RubyTuner
   class Error < StandardError; end
 
-  def self.configuration
-    @configuration ||= Configuration.new
+  class << self
+    attr_accessor :logger, :configuration
   end
+
+  self.logger ||= Logger.new($stdout, level: :debug, progname: "RubyTuner")
+  self.configuration ||= Configuration.new
 
   def self.configure
     self.configuration ||= Configuration.new
