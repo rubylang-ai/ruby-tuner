@@ -2,7 +2,8 @@
 
 module RubyTuner
   class Configuration
-    attr_accessor :workspace_dir, :base_model_path, :training_data_dir, :fine_tuned_models_dir, :python_executable
+    attr_accessor :base_model_path, :training_data_dir, :fine_tuned_models_dir, :python_executable
+    attr_reader :workspace_dir
 
     def initialize
       @workspace_dir = File.join(Dir.pwd, ".ruby-tuner")
@@ -10,6 +11,13 @@ module RubyTuner
       @training_data_dir = File.join(@workspace_dir, "training_data")
       @fine_tuned_models_dir = File.join(@workspace_dir, "fine_tuned_models")
       @python_executable = "python3"
+    end
+
+    def workspace_dir=(new_workspace_dir)
+      @workspace_dir = new_workspace_dir
+      @base_model_path = File.join(@workspace_dir, "base_model")
+      @training_data_dir = File.join(@workspace_dir, "training_data")
+      @fine_tuned_models_dir = File.join(@workspace_dir, "fine_tuned_models")
     end
 
     def self.configuration
