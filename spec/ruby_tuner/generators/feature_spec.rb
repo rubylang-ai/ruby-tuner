@@ -7,7 +7,6 @@ RSpec.describe RubyTuner::Generators::Feature do
   let(:implementation_file) { "#{Dir.pwd}/spec/fixtures/implementation.rb" }
   let(:test_cases_file) { "#{Dir.pwd}/spec/fixtures/test_cases.yml" }
   let(:template_file) { "#{Dir.pwd}/spec/fixtures/custom_template.erb" }
-  let(:original_dir) { Dir.pwd }
   let(:workspace_dir) { "#{Dir.pwd}/tmp/.ruby-tuner" }
 
   before do
