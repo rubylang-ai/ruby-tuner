@@ -72,5 +72,33 @@ module RubyTuner
 
       evaluator.evaluate(generated_content)
     end
+
+    desc "generate_training_data [FEATURE_ID]", "Generate training data for a feature or all features"
+    long_desc <<-LONGDESC
+      Generates training data based on the specified feature or all features if no feature ID is provided.
+
+      With FEATURE_ID argument:
+      Generates training data for the specified feature.
+
+      Without FEATURE_ID argument:
+      Generates training data for all features.
+
+      Options:
+      --examples: Number of examples to generate per feature (default: 50)
+      --output-dir: Custom output directory for training data
+      --config: Path to custom configuration file for rules
+    LONGDESC
+    option :examples, type: :numeric, default: 50, desc: "Number of examples to generate per feature"
+    option :output_dir, type: :string, desc: "Custom output directory for training data"
+    option :config, type: :string, desc: "Path to custom configuration file for rules"
+    def generate_training_data(feature_id = nil)
+      args = feature_id ? [feature_id] : []
+      training_options = options.dup
+      training_options[:examples] ||= 50
+      Generators::TrainingData.new(args, training_options).invoke_all
+    rescue Thor::Error => e
+      say e.message, :red
+      exit 1
+    end
   end
 end

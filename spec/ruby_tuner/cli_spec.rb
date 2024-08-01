@@ -8,7 +8,7 @@ RSpec.describe RubyTuner::CLI do
 
   describe "#evaluate" do
     let(:feature_id) { "test-feature" }
-    let(:implementation) { "def hello\n  puts 'Hello, World!'\nend" }
+    let(:implementation) { "def hello\n  puts \"Hello, World!\"\nend" }
     let(:mock_feature_evaluator) { instance_double(RubyTuner::Evaluators::Feature) }
     let(:mock_similarity_evaluator) { instance_double(RubyTuner::Evaluators::Similarity) }
 
@@ -87,6 +87,67 @@ RSpec.describe RubyTuner::CLI do
     it "calls evaluate on the Feature evaluator with the generated content" do
       expect(mock_feature_evaluator).to receive(:evaluate).with(implementation)
       cli.evaluate(feature_id, implementation)
+    end
+  end
+
+  describe "#generate_training_data" do
+    let(:generator) { instance_double(RubyTuner::Generators::TrainingData) }
+
+    before do
+      allow(RubyTuner::Generators::TrainingData).to receive(:new).and_return(generator)
+      allow(generator).to receive(:invoke_all)
+    end
+
+    context "with feature_id" do
+      it "calls TrainingData with correct arguments" do
+        expect(RubyTuner::Generators::TrainingData).to receive(:new).with(
+          ["sample_feature"],
+          hash_including(examples: 50)
+        )
+        cli.generate_training_data("sample_feature")
+      end
+    end
+
+    context "without feature_id" do
+      it "calls TrainingData with empty args" do
+        expect(RubyTuner::Generators::TrainingData).to receive(:new).with(
+          [],
+          hash_including(examples: 50)
+        )
+        cli.generate_training_data
+      end
+    end
+
+    context "with options" do
+      it "passes options to TrainingData" do
+        expect(RubyTuner::Generators::TrainingData).to receive(:new).with(
+          ["sample_feature"],
+          hash_including(
+            examples: 100,
+            output_dir: "/custom/output",
+            config: "/path/to/config.yml"
+          )
+        )
+        cli.options = {
+          examples: 100,
+          output_dir: "/custom/output",
+          config: "/path/to/config.yml"
+        }
+        cli.generate_training_data("sample_feature")
+      end
+    end
+
+    context "when an error occurs" do
+      before do
+        allow(generator).to receive(:invoke_all).and_raise(Thor::Error.new("Test error"))
+        allow(cli).to receive(:say)
+      end
+
+      it "exits with a non-zero status" do
+        expect { cli.generate_training_data }.to raise_error(SystemExit) { |error|
+          expect(error.status).to eq(1)
+        }
+      end
     end
   end
 end
