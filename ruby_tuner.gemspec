@@ -40,6 +40,8 @@ Gem::Specification.new do |spec|
   spec.add_dependency "tf-idf-similarity"
   # Adds more performant algorithms to support tf-idf
   spec.add_dependency "narray"
+  # Fine-tuning dependencies
+  spec.add_dependency "pycall"
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html

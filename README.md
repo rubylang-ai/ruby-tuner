@@ -2,7 +2,16 @@
 
 This is a framework for ongoing development of [Rubylang.ai](https://www.rubylang.ai)'s effort to develop a fine-tuned LLM for Ruby code generation.
 
-## Installation
+## Setup and Installation
+
+### Prerequisites
+
+**NOTICE:** RubyTuner requires Python 3.x with shared libraries enabled and the
+`transformers` and `pytorch` packages installed. If a valid Python environment
+is not detected, the setup process will attempt to install a suitable version
+into the RubyTuner workspace (`./.ruby-tuner/bin/` by default).
+
+### Installation
 
 Install the gem and add to the application's Gemfile by executing:
 
@@ -11,6 +20,12 @@ Install the gem and add to the application's Gemfile by executing:
 If bundler is not being used to manage dependencies, install the gem by executing:
 
     $ gem install ruby-tuner
+
+After installation, run the setup command:
+
+```bash
+ruby-tuner setup
+```
 
 ## Usage
 
@@ -92,7 +107,7 @@ implementations.
 ### Usage
 
 ```bash
-ruby_tuner evaluate FEATURE_ID [IMPLEMENTATION]
+ruby-tuner evaluate FEATURE_ID [IMPLEMENTATION]
 ```
 
 **Parameters:**
@@ -111,25 +126,25 @@ ruby_tuner evaluate FEATURE_ID [IMPLEMENTATION]
 Evaluate an inline implementation:
 
 ```bash
-ruby_tuner evaluate sort-array "def sort_array(arr); arr.sort; end"
+ruby-tuner evaluate sort-array "def sort_array(arr); arr.sort; end"
 ```
 
 Evaluate an implementation from a file:
 
 ```bash
-ruby_tuner evaluate sort-array --file ./implementations/sort_array.rb
+ruby-tuner evaluate sort-array --file ./implementations/sort_array.rb
 ```
 
 Evaluate an implementation from standard input:
 
 ```bash
-echo "def sort_array(arr); arr.sort; end" | ruby_tuner evaluate sort-array
+echo "def sort_array(arr); arr.sort; end" | ruby-tuner evaluate sort-array
 ```
 
 Use a different similarity method and threshold:
 
 ```
-ruby_tuner evaluate sort-array --similarity-method exact --similarity-threshold 0.9 "def sort_array(arr); arr.sort; end"
+ruby-tuner evaluate sort-array --similarity-method exact --similarity-threshold 0.9 "def sort_array(arr); arr.sort; end"
 ```
 
 ### How it works
@@ -153,7 +168,7 @@ be displayed in the console output.
 Comming soon...
 
 ```bash
-ruby_tuner generate_training_data your-feature-description
+ruby-tuner generate_training_data your-feature-description
 ```
 
 ## Fine-tuning a Model
@@ -161,7 +176,7 @@ ruby_tuner generate_training_data your-feature-description
 Coming soon...
 
 ```bash
-ruby_tuner fine_tune
+ruby-tuner fine_tune
 ```
 
 ## Using a Fine-tuned Model
@@ -169,7 +184,7 @@ ruby_tuner fine_tune
 Coming soon...
 
 ```bash
-ruby_tuner run "a method to stream the contents of a file appended to another file"
+ruby-tuner run "a method to stream the contents of a file appended to another file"
 ```
 
 ## Configuration

@@ -4,6 +4,7 @@ PATH
     ruby-tuner (0.1.0)
       activesupport
       narray
+      pycall
       tf-idf-similarity
       thor
       zeitwerk
@@ -40,6 +41,7 @@ GEM
     parser (3.3.4.0)
       ast (~> 2.4.1)
       racc
+    pycall (1.5.2)
     racc (1.8.0)
     rainbow (3.1.1)
     rake (13.2.1)

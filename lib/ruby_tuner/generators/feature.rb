@@ -86,7 +86,7 @@ module RubyTuner
         say "2. Implement or refine your implementation in implementation.rb"
         say "3. Add more test cases to test_cases.yml if needed"
         say "4. Generate training data using:"
-        say "   ruby_tuner generate_training_data #{@feature_id}"
+        say "   ruby-tuner generate_training_data #{@feature_id}"
       end
     end
   end

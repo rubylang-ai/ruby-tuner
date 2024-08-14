@@ -1,8 +1,11 @@
 # frozen_string_literal: true
 
+require "yaml"
+
 module RubyTuner
   class Configuration
-    attr_accessor :base_model_path, :training_data_dir, :fine_tuned_models_dir, :python_executable
+    attr_accessor :base_model_path, :training_data_dir, :fine_tuned_models_dir, :python_executable,
+      :hugging_face_access_token, :cache_dir, :minimum_model_performance
     attr_reader :workspace_dir
 
     def initialize
@@ -10,7 +13,10 @@ module RubyTuner
       @base_model_path = File.join(@workspace_dir, "base_model")
       @training_data_dir = File.join(@workspace_dir, "training_data")
       @fine_tuned_models_dir = File.join(@workspace_dir, "fine_tuned_models")
-      @python_executable = "python3"
+      @hugging_face_access_token = ENV["HUGGING_FACE_ACCESS_TOKEN"]
+      @cache_dir = File.join(@workspace_dir, "cache")
+      @minimum_model_performance = 0.7
+      @python_executable = nil
     end
 
     def workspace_dir=(new_workspace_dir)
@@ -18,6 +24,15 @@ module RubyTuner
       @base_model_path = File.join(@workspace_dir, "base_model")
       @training_data_dir = File.join(@workspace_dir, "training_data")
       @fine_tuned_models_dir = File.join(@workspace_dir, "fine_tuned_models")
+      @cache_dir = File.join(@workspace_dir, "cache")
+    end
+
+    def save!
+      File.write(configuration_file, to_yaml)
+    end
+
+    def configuration_file
+      File.join(@workspace_dir, "config.yml")
     end
 
     def self.configuration
@@ -26,6 +41,13 @@ module RubyTuner
 
     def self.configure
       yield(configuration)
+    end
+
+    def self.load
+      YAML.load_file(new.configuration_file, permitted_classes: [RubyTuner::Configuration])
+    rescue
+      RubyTuner.logger.warn "Unable to load configuration from: #{new.configuration_file}"
+      new
     end
   end
 end

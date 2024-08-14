@@ -11,6 +11,36 @@ module RubyTuner
       true
     end
 
+    desc "setup", "Set up the Python environment for RubyTuner"
+    long_desc <<-LONGDESC
+      Sets up the Python environment required for RubyTuner.
+      This command will check for an existing valid Python installation
+      or install a new one if necessary. It also ensures that all required
+      Python libraries are available.
+
+      Use this command if you're setting up RubyTuner for the first time
+      or if you're experiencing issues with the Python environment.
+    LONGDESC
+    option :force, type: :boolean, default: false, desc: "Force setup even if a valid environment is detected"
+    def setup
+      if options[:force]
+        say "Forcing Python environment setup...", :blue
+        RubyTuner.setup!
+      elsif !RubyTuner.setup?
+        say "Setting up Python environment...", :blue
+        RubyTuner.setup!
+      end
+
+      # Double check that the installation went well.
+      if RubyTuner.setup?
+        say "Python environment is set up and ready!", :green
+      else
+        say "Failed to set up Python environment. Please check the logs for more information.", :red
+      end
+    rescue RubyTuner::PythonSetup::PythonNotInstalledError
+      say "Failed to set up Python environment. Please check the logs for more information.", :red
+    end
+
     desc "generate_feature DESCRIPTION", "Generate a feature file"
     long_desc <<-LONGDESC
       Generates a feature file using the given description.
