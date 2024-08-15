@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "yaml"
+require "fileutils"
 
 module RubyTuner
   class Configuration
@@ -28,6 +29,8 @@ module RubyTuner
     end
 
     def save!
+      # Make sure workspace exists
+      FileUtils.mkdir_p @workspace_dir
       File.write(configuration_file, to_yaml)
     end
 
