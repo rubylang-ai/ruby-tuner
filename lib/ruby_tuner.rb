@@ -39,4 +39,9 @@ module RubyTuner
   def self.python_module(module_name)
     import_python_module(module_name)
   end
+
+  def self.cuda_available?
+    # Check if nvidia-smi command is available and returns successfully
+    system("which nvidia-smi > /dev/null 2>&1 && nvidia-smi > /dev/null 2>&1")
+  end
 end

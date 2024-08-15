@@ -34,7 +34,8 @@ ruby-tuner setup
 3. Evaluate the implementation
 4. Generate training data
 5. Fine-tune the model
-6. Use the fine-tuned model
+6. Serving models
+7. Use the fine-tuned model
 
 ## Generating a Feature
 
@@ -177,6 +178,56 @@ Coming soon...
 
 ```bash
 ruby-tuner fine_tune
+```
+
+## Serving a Model
+
+For ease-of-use, we've adopted the [HuggingFace text-generation-inference
+server](https://github.com/huggingface/text-generation-inference) for running
+inference on models from HuggingFace (our primary source of base-models). To
+serve a model using Docker, use the `serve` command:
+
+```bash
+ruby_tuner serve MODEL_PATH [OPTIONS]
+```
+
+Arguments:
+- `MODEL_PATH`: Path to the model directory or Hugging Face model ID.
+
+Options:
+- `--port PORT`: Port to run the server on (default: 8080)
+- `--docker-image IMAGE`: Docker image to use (default: ghcr.io/huggingface/text-generation-inference:latest)
+- `--max-input-tokens TOKENS`: Maximum number of input tokens (default: 1024)
+- `--force-cpu`: Force CPU usage even if CUDA is available (default: false)
+
+Examples:
+```bash
+# Serve a local model
+ruby_tuner serve /path/to/model/directory
+
+# Serve a Hugging Face model
+ruby_tuner serve huggingface/model-id
+
+# Specify a custom port, Docker image, and max input tokens
+ruby_tuner serve /path/to/model/directory --port 8000 --docker-image
+custom/image:tag --max-input-tokens 2048
+
+# Force CPU usage
+ruby_tuner serve /path/to/model/directory --force-cpu
+```
+
+Note: This command requires Docker to be installed and running on your system.
+
+The script automatically detects if CUDA is available on your system and uses
+GPU acceleration if possible. If you want to force CPU usage even when CUDA is
+available, use the `--force-cpu` option.
+
+For models that use sliding window attention (like phi3), you may need to set
+`--max-input-tokens` to a value smaller than the model's sliding window size.
+For example:
+
+```bash
+ruby_tuner serve microsoft/phi-2 --max-input-tokens 2047
 ```
 
 ## Using a Fine-tuned Model
