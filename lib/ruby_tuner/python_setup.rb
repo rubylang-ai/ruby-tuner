@@ -93,7 +93,7 @@ module RubyTuner
         data = JSON.parse(json)
         latest_version = data.find do |d|
           d["name"].include?("3.12.4")
-          #d["is_latest"] &&
+          # d["is_latest"] &&
           #  d["show_on_download_page"] &&
           #  d["version"] > 2 &&
           #  !d["pre_release"]

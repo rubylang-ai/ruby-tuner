@@ -154,14 +154,14 @@ module RubyTuner
       max_input_tokens = options[:max_input_tokens] || 1024
       force_cpu = options[:force_cpu] || false
       # Determine if model_path is a local directory or a Hugging Face model ID
-      volume = options[:volume] ||  RubyTuner.configuration.base_model_path
+      volume = options[:volume] || RubyTuner.configuration.base_model_path
       token = ENV["HUGGING_FACE_ACCESS_TOKEN"]
       gpu_option = (RubyTuner.cuda_available? && !force_cpu) ? "--gpus all" : ""
       docker_command = options[:privileged] ? "sudo " : ""
-      if token
-        docker_command << "docker run --rm -it #{gpu_option} --shm-size 1g -e HF_TOKEN=#{token} -p #{port}:80 -v #{volume}:/data #{docker_image} --model-id #{model_path} --max-input-tokens #{max_input_tokens}"
+      docker_command << if token
+        "docker run --rm -it #{gpu_option} --shm-size 1g -e HF_TOKEN=#{token} -p #{port}:80 -v #{volume}:/data #{docker_image} --model-id #{model_path} --max-input-tokens #{max_input_tokens}"
       else
-        docker_command << "docker run --rm -it #{gpu_option} --shm-size 1g -p #{port}:80 -v #{volume}:/data #{docker_image} --model-id #{model_path} --max-input-tokens #{max_input_tokens}"
+        "docker run --rm -it #{gpu_option} --shm-size 1g -p #{port}:80 -v #{volume}:/data #{docker_image} --model-id #{model_path} --max-input-tokens #{max_input_tokens}"
       end
 
       say "Starting HuggingFace text-generation-inference server..."
@@ -169,7 +169,7 @@ module RubyTuner
       say "Port: #{port}"
       say "Docker image: #{docker_image}"
       say "Max input tokens: #{max_input_tokens}"
-      say "Using GPU: #{(RubyTuner.cuda_available? && !force_cpu) ? 'Yes' : 'No'}"
+      say "Using GPU: #{(RubyTuner.cuda_available? && !force_cpu) ? "Yes" : "No"}"
       say "Using model cache dir: #{volume}"
       say "Running: #{docker_command}", :yellow
       say "This will serve the Chat API for #{model_path}: http://127.0.0.1:#{port}/v1/chat/completions"

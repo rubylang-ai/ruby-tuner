@@ -7,14 +7,14 @@ def setup_feature(feature_id)
   FileUtils.mkdir_p @feature_dir
   File.write(File.join(@feature_dir, "feature.rb"), "A method that outputs 'Hello, World!'")
   File.write(File.join(@feature_dir, "implementation.rb"), "def sample_method\n  puts 'Hello, World!'\nend")
-  File.write(File.join(@feature_dir, "metadata.yml"), { difficulty: "easy", tags: ["sample"] }.to_yaml)
+  File.write(File.join(@feature_dir, "metadata.yml"), {difficulty: "easy", tags: ["sample"]}.to_yaml)
 end
 
 RSpec.describe RubyTuner::Generators::TrainingData do
   let(:workspace_dir) { "#{Dir.pwd}/tmp/.ruby-tuner" }
   let(:feature_id) { "sample_feature" }
   let(:num_examples) { 3 }
-  let(:custom_config) { { prompt: { rewording: { enabled: false } } } }
+  let(:custom_config) { {prompt: {rewording: {enabled: false}}} }
 
   before do
     @original_working_dir = Dir.pwd
@@ -30,7 +30,6 @@ RSpec.describe RubyTuner::Generators::TrainingData do
     end
     FileUtils.rm_rf(workspace_dir)
   end
-
 
   describe "#create_training_data" do
     let(:generator) do
@@ -70,7 +69,7 @@ RSpec.describe RubyTuner::Generators::TrainingData do
     end
 
     context "when config is specified" do
-      let(:generator) { described_class.new([feature_id], { config: custom_config }) }
+      let(:generator) { described_class.new([feature_id], {config: custom_config}) }
 
       it "passes custom configuration to FeatureRules" do
         allow(RubyTuner::Variations::FeatureRules).to receive(:new).and_call_original
@@ -80,7 +79,7 @@ RSpec.describe RubyTuner::Generators::TrainingData do
     end
 
     context "when examples is specified" do
-      let(:generator) { described_class.new([], { examples: 1}) }
+      let(:generator) { described_class.new([], {examples: 1}) }
       it "generates the specified number of variations" do
         generator.invoke_all
 
