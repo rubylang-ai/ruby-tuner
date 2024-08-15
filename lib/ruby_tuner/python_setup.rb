@@ -75,9 +75,6 @@ module RubyTuner
 
       def use_existing_python
         RubyTuner.logger.debug "Using an existing python installation: #{@python_executable}"
-        # No need to install, just set the version
-        version = `#{@python_executable} --version`.strip.split[1]
-        cache_version(version)
       end
 
       def setup_python_environment
