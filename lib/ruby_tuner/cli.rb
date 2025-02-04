@@ -209,6 +209,17 @@ module RubyTuner
       generated_code = manager.run_inference(options[:model], code_prompt)
       say "Generated Code:", :green
       say generated_code
+    rescue PyCall::PyError => e
+      RubyTuner.logger.debug "Unable to load fine-tuned model: #{e.message}.  Attempting to run with TGI..."
+      client = RubyTuner::Inference::TextGeneration.new
+
+      begin
+        generated_code = client.complete([{ role: "user", content: code_prompt }])
+        say "Generated Code:", :green
+        say generated_code
+      rescue RubyTuner::Inference::TextGeneration::APIError => e
+        raise Thor::Error, e.message
+      end
     end
 
     desc "serve MODEL_PATH", "Run a HuggingFace text-generation-inference server via Docker"
