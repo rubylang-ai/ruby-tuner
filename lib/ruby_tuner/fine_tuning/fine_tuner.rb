@@ -41,7 +41,7 @@ module RubyTuner
         debug_forward_pass(sample_input)
 
         trainer.train
-        trainer.model
+        PyCall.getattr(trainer, :model)
       end
 
       private

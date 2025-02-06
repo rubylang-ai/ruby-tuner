@@ -23,7 +23,7 @@ module RubyTuner
 
         # Save the model
         model_path = File.join(output_dir, "pytorch_model.bin")
-        PyCall.eval("torch").save(model.state_dict, model_path)
+        RubyTuner.python_module("torch").save(model.state_dict, model_path)
 
         # Save the model configuration
         model.config.save_pretrained(output_dir)

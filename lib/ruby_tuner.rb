@@ -13,7 +13,7 @@ module RubyTuner
     attr_accessor :logger, :configuration
   end
 
-  self.logger ||= Logger.new($stdout, level: :debug, progname: "RubyTuner")
+  self.logger ||= Logger.new($stdout, level: :info, progname: "RubyTuner")
   self.configuration ||= Configuration.load
 
   def self.configure

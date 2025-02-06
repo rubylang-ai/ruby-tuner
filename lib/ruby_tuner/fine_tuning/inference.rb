@@ -18,6 +18,7 @@ module RubyTuner
         @current_model = nil
         @current_tokenizer = nil
         PyCall.init(RubyTuner.configuration.python_executable)
+        @torch = PyCall.import_module("torch")
       end
 
       # Loads a specific model for inference
@@ -40,9 +41,8 @@ module RubyTuner
 
         input_ids = @current_tokenizer.encode(prompt, return_tensors: "pt")
 
-        pyimport :torch
         output = []
-        with torch.no_grad do
+        @torch.no_grad do
           output = @current_model.generate(
             input_ids,
             max_length: max_length,

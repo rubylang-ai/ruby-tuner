@@ -72,12 +72,12 @@ module RubyTuner
 
         if evaluation_results[:performance] >= RubyTuner.configuration.minimum_model_performance
           metadata = {
-            base_model: selected_model,
+            base_model: params[:base_model],
             performance: evaluation_results[:performance],
             fine_tuned_date: Time.now.iso8601,
             fine_tuning_params: fine_tuning_args
           }
-          @model_persistence.save_model(fine_tuned_model, tokenization, params[:output_dir], metadata)
+          @model_persistence.save_model(fine_tuned_model, @tokenizer, params[:output_dir], metadata)
           RubyTuner.logger.info("Fine-tuning successful. Model saved to #{params[:output_dir]}")
           true
         else

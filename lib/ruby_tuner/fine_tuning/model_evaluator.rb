@@ -8,6 +8,7 @@ module RubyTuner
       # @param tokenizer [Object] the tokenizer used for the model
       def initialize(tokenizer)
         @tokenizer = tokenizer
+        @torch = RubyTuner.import_python_module("torch")
       end
 
       # Evaluates the model's performance
@@ -45,7 +46,7 @@ module RubyTuner
       # @param input_ids [Array<Integer>] input token IDs
       # @return [Hash] model output
       def generate_prediction(model, input_ids)
-        input_tensor = PyCall.eval("torch").tensor([input_ids])
+        input_tensor = @torch.tensor([input_ids])
         model.generate(input_tensor, max_length: 512)
       end
     end
