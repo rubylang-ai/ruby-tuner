@@ -264,7 +264,7 @@ module RubyTuner
       say "Max input tokens: #{max_input_tokens}"
       say "Using GPU: #{(RubyTuner.cuda_available? && !force_cpu) ? 'Yes' : 'No'}"
       say "Using model cache dir: #{volume}"
-      say "Running: #{docker_command}", :yellow
+      say "Running: #{docker_command.gsub(/HF_TOKEN=[^\s]*\s/, "*******")}", :yellow
       say "This will serve the Chat API for #{model_path}: http://127.0.0.1:#{port}/v1/chat/completions"
       exec(docker_command)
     rescue => e
