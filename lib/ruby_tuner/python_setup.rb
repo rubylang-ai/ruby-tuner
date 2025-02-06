@@ -92,7 +92,7 @@ module RubyTuner
         json = URI.open("https://www.python.org/api/v2/downloads/release/?is_published=true").read
         data = JSON.parse(json)
         latest_version = data.find do |d|
-          d["name"].include?("3.12.4")
+          d["name"].include?("3.11.11")
           #d["is_latest"] &&
           #  d["show_on_download_page"] &&
           #  d["version"] > 2 &&
