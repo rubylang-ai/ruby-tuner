@@ -222,52 +222,39 @@ module RubyTuner
       end
     end
 
-    desc "serve MODEL_PATH", "Run a HuggingFace text-generation-inference server via Docker"
+    desc "serve MODEL_PATH", "Run inference server using SGLang"
     long_desc <<-LONGDESC
-      Runs a HuggingFace text-generation-inference server using Docker.
-      Learn more: https://huggingface.co/docs/text-generation-inference/index
+      Runs a local inference server using SGLang.
+      Learn more: https://docs.sglang.ai/backend/openai_api_completions.html
 
       MODEL_PATH: Path to the model directory or Hugging Face model ID.
 
-      Options:
-      --port: Port to run the server on (default: 8080)
-      --docker-image: Docker image to use (default: ghcr.io/huggingface/text-generation-inference:latest)
+      Examples:
+      $ ruby-tuner serve microsoft/phi-2
+      $ ruby-tuner serve --port 8000 microsoft/phi-2
+      $ ruby-tuner serve --host 0.0.0.0 --force-cpu microsoft/phi-2
     LONGDESC
     option :volume, type: :string, required: false, desc: "Path to use for cached model data", default: RubyTuner.configuration.base_model_path
-    option :docker_image, type: :string, default: "ghcr.io/huggingface/text-generation-inference:latest"
-    option :port, type: :numeric, required: false, desc: "Port to serve on", default: 3000
-    option :privileged, type: :boolean, required: false, desc: "Whether the docker command needs 'sudo'", default: false
-    option :max_input_tokens, type: :numeric, default: 1024, desc: "Maximum number of input tokens"
+    option :port, type: :numeric, default: 3000, desc: "Port to run the server on"
+    option :host, type: :string, default: "127.0.0.1", desc: "Host interface to bind to"
     option :force_cpu, type: :boolean, default: false, desc: "Force CPU usage even if CUDA is available"
+    option :privileged, type: :boolean, required: false, desc: "Whether the docker command needs 'sudo'", default: false
     def serve(model_path)
-      raise Thor::Error, "Docker is not installed or not running. Please install Docker and ensure it's running." unless system((options[:privileged] ? "sudo " : "") + "docker info > /dev/null 2>&1")
+      server = RubyTuner::Server::Factory.create(model_path, options)
 
-      docker_image = options[:docker_image] || "ghcr.io/huggingface/text-generation-inference:latest"
-      port = options[:port] || 3000
-      max_input_tokens = options[:max_input_tokens] || 1024
-      force_cpu = options[:force_cpu] || false
-      # Determine if model_path is a local directory or a Hugging Face model ID
-      volume = options[:volume] ||  RubyTuner.configuration.base_model_path
-      token = ENV["HUGGING_FACE_ACCESS_TOKEN"]
-      gpu_option = (RubyTuner.cuda_available? && !force_cpu) ? "--gpus all" : ""
-      docker_command = options[:privileged] ? "sudo " : ""
-      if token
-        docker_command << "docker run --rm -it #{gpu_option} --shm-size 1g -e HF_TOKEN=#{token} -p #{port}:80 -v #{volume}:/data #{docker_image} --model-id #{model_path} --max-input-tokens #{max_input_tokens}"
-      else
-        docker_command << "docker run --rm -it #{gpu_option} --shm-size 1g -p #{port}:80 -v #{volume}:/data #{docker_image} --model-id #{model_path} --max-input-tokens #{max_input_tokens}"
-      end
-
-      say "Starting HuggingFace text-generation-inference server..."
+      say "Starting SGLang inference server..."
       say "Model: #{model_path}"
-      say "Port: #{port}"
-      say "Docker image: #{docker_image}"
-      say "Max input tokens: #{max_input_tokens}"
-      say "Using GPU: #{(RubyTuner.cuda_available? && !force_cpu) ? 'Yes' : 'No'}"
-      say "Using model cache dir: #{volume}"
-      say "Running: #{docker_command.gsub(/HF_TOKEN=[^\s]*\s/, "*******")}", :yellow
-      say "This will serve the Chat API for #{model_path}: http://127.0.0.1:#{port}/v1/chat/completions"
-      exec(docker_command)
+      say "Host: #{options[:host]}"
+      say "Port: #{options[:port]}"
+
+      gpu_info = RubyTuner.cuda_available? && !options[:force_cpu] ?  "Yes (#{RubyTuner.gpu_count} GPUs)" : "No"
+
+      say "Using GPU: #{gpu_info}"
+      say "HuggingFace token: #{ENV['HUGGING_FACE_ACCESS_TOKEN'] ? 'Configured' : 'Not configured'}"
+
+      server.start
     rescue => e
+      pp e
       raise Thor::Error, "Failed to start server: #{e.message}"
     end
   end
