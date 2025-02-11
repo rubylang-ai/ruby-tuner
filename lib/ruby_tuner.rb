@@ -44,4 +44,12 @@ module RubyTuner
     # Check if nvidia-smi command is available and returns successfully
     system("which nvidia-smi > /dev/null 2>&1 && nvidia-smi > /dev/null 2>&1")
   end
+
+  def self.gpu_count
+    return 0 unless cuda_available?
+
+    `nvidia-smi --query-gpu=gpu_name --format=csv,noheader | wc -l`.to_i
+  rescue
+    0
+  end
 end
